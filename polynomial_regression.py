@@ -4,8 +4,8 @@ import numpy.matlib as matlib
 from linear_regression import LinearRegression
 
 class PolynomialRegression(LinearRegression):
-  def __init__(self, polynomials, sigma=.0005, iterations=100):
-    super().__init__(sigma, iterations)
+  def __init__(self, polynomials, sigma=.0005, iterations=100, logistic=False):
+    super().__init__(sigma, iterations, logistic)
     self.polynomials = polynomials
 
   def alter_x(self, x):

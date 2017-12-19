@@ -2,9 +2,10 @@ import numpy as np
 import numpy.matlib as matlib
 
 class LinearRegression:
-  def __init__(self, sigma=.0005, iterations=100):
+  def __init__(self, sigma=.0005, iterations=100, logistic=False):
     self.sigma = sigma
     self.iterations = iterations
+    self.logistic = logistic
 
     self.theta = None
 
@@ -36,4 +37,6 @@ class LinearRegression:
     return 1 - np.mean(np.absolute(self.activation(x) - y) / y)
 
   def activation(self, x):
+    if self.logistic:
+      return 1 / (1 + np.exp(x * self.theta))
     return x * self.theta
