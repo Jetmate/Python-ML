@@ -3,30 +3,37 @@ import numpy.matlib as matlib
 
 class LinearRegression:
   def __init__(self, sigma=.0005, iterations=100):
-    self.theta = None
     self.sigma = sigma
     self.iterations = iterations
 
+    self.theta = None
+
+  def requires_theta(func):
+    def wrapper(self, *args, **kwargs):
+      if (self.theta is None):
+        raise Exception('Not yet trained!')
+      return func(self, *args, **kwargs)
+    return wrapper
+
+  def alter_x(self, x):
+    return np.insert(x, 0, 1, axis=1)
+
   def fit(self, x, y):
-    x = self.add_bias(x)
     m = x.shape[0]
-    self.theta = matlib.zeros((x.shape[1], 1))
+    x = self.alter_x(x)
+    if self.theta is None:
+      self.theta = matlib.zeros((x.shape[1], 1))
     for i in range(self.iterations):
       self.theta -= (x.T * (self.activation(x) - y)) / m * self.sigma
 
+  @requires_theta
   def predict(self, x):
-    x = self.add_bias(x)
-    if (not self.theta):
-      raise Exception('Not yet trained!')
-    return x * self.theta
+    return self.activation(self.alter_x(x))
 
+  @requires_theta
   def score(self, x, y):
-    x = self.add_bias(x)
+    x = self.alter_x(x)
     return 1 - np.mean(np.absolute(self.activation(x) - y) / y)
 
   def activation(self, x):
     return x * self.theta
-
-  @staticmethod
-  def add_bias(x):
-    return np.insert(x, 0, 1, axis=1)
